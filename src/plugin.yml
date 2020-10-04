@@ -1,0 +1,25 @@
+name: BasicServerPlugin
+main: basic.Main
+version: 0.2-developing
+api-version: 1.16
+author: bjw300/백조, peanutexe/땅콩
+description: this plugin is Basic Utility plugin
+website: https://github.com/bjw300/BasicServerPlugin
+
+commands:
+  메뉴:
+    description: "execute server menu"
+  상점:
+    description: "execute server shop"
+  관리자메뉴:
+    description: "execute task menu"
+  월드메뉴:
+    description: "execute world menu"
+  설정:
+    description: "execute setting"
+  명령어:
+    description: "execute help"
+  법전:
+    description: "execute code of laws"
+  b:
+    description: "plugin info"
