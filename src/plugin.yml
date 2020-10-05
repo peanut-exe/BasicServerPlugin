@@ -21,5 +21,7 @@ commands:
     description: "execute help"
   법전:
     description: "execute code of laws"
+  칭호설정:
+    description: "Set the title"
   b:
     description: "plugin info"
