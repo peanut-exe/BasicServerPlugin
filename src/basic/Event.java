@@ -26,17 +26,6 @@ public class Event implements Listener {
     public void onPlayerQuit(PlayerQuitEvent e) {
         e.setQuitMessage(ChatColor.YELLOW + e.getPlayer().getName() + "님이 서버에서 나갔다!");}
 
-    //천둥
-    @EventHandler
-    public void PlayerInteract(PlayerInteractEvent e) {
-        Player p = e.getPlayer();
-        Block b = p.getTargetBlock(null, 80);
-        if (p.getItemInHand().getType().equals(Material.BLAZE_ROD)) {
-            if(e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
-                p.getWorld().strikeLightning(b.getLocation());
-            }
-        }
-    }
     //폭팔방지
     @EventHandler
     public void onExplode(ExplosionPrimeEvent e) {
@@ -48,6 +37,17 @@ public class Event implements Listener {
             Player p = e.getPlayer();
             e.setCancelled(true);
             Bukkit.broadcastMessage(ChatColor.RED + "tnt를 '왜' 설치하나 " + p.getName() + "?");
+        }
+    }
+    //천둥
+    @EventHandler
+    public void PlayerInteract(PlayerInteractEvent e) {
+        Player p = e.getPlayer();
+        Block b = p.getTargetBlock(null, 80);
+        if (p.getItemInHand().getType().equals(Material.BLAZE_ROD)) {
+            if(e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
+                p.getWorld().strikeLightning(b.getLocation());
+            }
         }
     }
 }

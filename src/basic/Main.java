@@ -6,6 +6,9 @@ import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -13,13 +16,17 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Arrays;
+import java.util.HashMap;
 
-public class Main extends JavaPlugin {
+public class Main extends JavaPlugin implements Listener {
+
+    public HashMap<String, String> 칭호 = new HashMap<String, String>();
 
     @Override
     //플러그인 활성화 메세지
     public void onEnable() {
         System.out.println("[BasicServerPlugin] Activate/활성화!");
+        Bukkit.getPluginManager().registerEvents(this, this);
         Bukkit.getPluginManager().registerEvents(new Event(), this);
         Bukkit.getPluginManager().registerEvents(new GuiEvent(), this);
     }
@@ -62,6 +69,17 @@ public class Main extends JavaPlugin {
             if (sender instanceof Player) {
                 sender.sendMessage("-Ss 야생서버 법-\n1,아래 조항들은 크루 팀원들의 의견에 따라 바뀔수 있다.\n2,서로 존중해 주기.\n3,크리에이티브 사용 금지.\n4,위 조항은 팀원 모두의 허락을 받을시 가능.\n5,똥싸지 말기.\n6,흉물은 팀원들의 의견에 따라 과반수가 넘을시 철거 가능.\n7,명령어를 이용하여 아이템 및 버프 부여 금지.\n8,인첸크를 위한 청금석과 경험치는 명령어 이용 가능.\n9,위 조항들을 어길시 경우에 따라 재판 및 처벌 절차.\n10,재판에서 묵비권 행사 가능 및 변호사를 선임하든 말든 맘데로.");
                 return false;
+            }
+        }
+        //칭호(설정부분)
+        if (command.getName().equalsIgnoreCase("칭호설정")) {
+            if (args.length == 1) {
+                String 칭호 = args[0];
+                this.칭호.put(p.getName(), 칭호);
+                p.sendMessage(ChatColor.YELLOW + "채팅 칭호가 설정되었습니다 [" + 칭호 + "]");
+            }
+            else {
+                p.sendMessage(ChatColor.RED + "잘못된 구문입니다");
             }
         }
         //homes(개발중)
@@ -197,5 +215,13 @@ public class Main extends JavaPlugin {
             }
         }
         return false;
+    }
+    //칭호(메시지포멧)
+    @EventHandler
+    public void onAsyncPlayerChat(AsyncPlayerChatEvent e) {
+        String format = e.getFormat();
+        String 칭호 = this.칭호.get(e.getPlayer().getName());
+        if(칭호 != null)
+            e.setFormat(칭호 + ChatColor.RESET + " " + format);
     }
 }
