@@ -2,6 +2,7 @@ package basic;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -14,6 +15,7 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scoreboard.*;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -21,35 +23,67 @@ import java.util.HashMap;
 public class Main extends JavaPlugin implements Listener {
 
     public HashMap<String, String> 칭호 = new HashMap<String, String>();
+    public HashMap<String, String> 색깔 = new HashMap<String, String>();
+    public HashMap<String, Integer> warp = new HashMap<String, Integer>();
 
     @Override
-    //플러그인 활성화 메세지
+    //플러그인 활성화
     public void onEnable() {
         System.out.println("[BasicServerPlugin] Activate/활성화!");
+        this.saveDefaultConfig();
         Bukkit.getPluginManager().registerEvents(this, this);
         Bukkit.getPluginManager().registerEvents(new Event(), this);
         Bukkit.getPluginManager().registerEvents(new GuiEvent(), this);
     }
 
     @Override
-    //플러그인 비활성화 메세지
+    //플러그인 비활성화
     public void onDisable() {
         System.out.println("[BasicServerPlugin] Deactivate/비활성화!");
+    }
+
+    //scoreboard
+    public void setScoreBoard(Player player) {
+        ScoreboardManager manager = Bukkit.getScoreboardManager();
+        Scoreboard sb = manager.getNewScoreboard();
+        Objective obj = sb.registerNewObjective("sb", "dummy" ,ChatColor.translateAlternateColorCodes('&', "&e테스트 서버"));
+        obj.setDisplaySlot(DisplaySlot.SIDEBAR);
+        obj.getScore("============== ").setScore(12);
+        obj.getScore(" ").setScore(11);
+        obj.getScore("- 당신의 닉네임").setScore(10);
+        obj.getScore(">  " + player.getName()).setScore(9);
+        obj.getScore("  ").setScore(8);
+        obj.getScore("- 당신의 돈").setScore(7);
+        obj.getScore(">   ").setScore(6);
+        obj.getScore("   ").setScore(5);
+        obj.getScore("- 접속자 수").setScore(4);
+        obj.getScore("> " + Bukkit.getOnlinePlayers().size()).setScore(3);
+        obj.getScore("    ").setScore(2);
+        obj.getScore("==============").setScore(1);
+        player.setScoreboard(sb);
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         Player p = (Player) sender;
-        if(!(sender instanceof Player)) {
+        if(sender == null) {
             System.out.println("[BasicServerPlugin] not support console!/콘솔은 지원되지 않습니다!");
             return true;
         }
-        //플러그인 설명
+        //플러그인 유용한 도구
         if (command.getName().equalsIgnoreCase("b")) {
             if (args.length == 0) {
-                sender.sendMessage(ChatColor.RED + "Type the command to execute.");}
+                sender.sendMessage(ChatColor.RED + "Type the command to execute.");
+            }
             else if (args[0].equalsIgnoreCase("info")) {
-                sender.sendMessage(ChatColor.YELLOW + "This Plugin is Made By bjw300 and peanutexe");}
+                sender.sendMessage(ChatColor.YELLOW + "This Plugin is Made By bjw300 and peanutexe");
+            }
+            else if (args[0].equalsIgnoreCase("reload")) {
+                Bukkit.reload();
+                this.reloadConfig();
+                this.saveDefaultConfig();
+                p.sendMessage(ChatColor.YELLOW + "All plugins have been reloaded!");
+            }
             else {
                 sender.sendMessage(ChatColor.RED + "Command is not correct.");}
             return true;
@@ -57,34 +91,46 @@ public class Main extends JavaPlugin implements Listener {
         //도움말
         if (command.getName().equalsIgnoreCase("명령어")) {
             if (args.length == 0) {
-                sender.sendMessage(ChatColor.RED + "명령어 사용법: /명령어 [도움/도움말/모음]");}
+                sender.sendMessage(ChatColor.RED + "명령어 사용법: /명령어 [도움/도움말/모음]");
+            }
             else if (args[0].equals("도움") || args[0].equals("도움말") || args[0].equals("모음")) {
-                sender.sendMessage("메뉴열기,지급 명령어: /[메뉴/메뉴 지급]\n정보표시창 켜기/끄기: /정보표시창 [켜기/끄기]\n자신의 창고보기: /(창고/warehouse)\n법전보기: /법전");}
+                sender.sendMessage("메뉴열기,지급 명령어: /[메뉴/메뉴 지급]\n정보표시창 켜기/끄기: /정보표시창 [켜기/끄기]\n자신의 창고보기: /(창고/warehouse)");
+            }
             else {
-                sender.sendMessage(ChatColor.RED + "명령어 사용법: /명령어 [도움/도움말/모음]");}
+                sender.sendMessage(ChatColor.RED + "명령어 사용법: /명령어 [도움/도움말/모음]");
+            }
             return true;
         }
-        //법전
-        if (command.getName().equalsIgnoreCase("법전")) {
-            if (sender instanceof Player) {
-                sender.sendMessage("-Ss 야생서버 법-\n1,아래 조항들은 크루 팀원들의 의견에 따라 바뀔수 있다.\n2,서로 존중해 주기.\n3,크리에이티브 사용 금지.\n4,위 조항은 팀원 모두의 허락을 받을시 가능.\n5,똥싸지 말기.\n6,흉물은 팀원들의 의견에 따라 과반수가 넘을시 철거 가능.\n7,명령어를 이용하여 아이템 및 버프 부여 금지.\n8,인첸크를 위한 청금석과 경험치는 명령어 이용 가능.\n9,위 조항들을 어길시 경우에 따라 재판 및 처벌 절차.\n10,재판에서 묵비권 행사 가능 및 변호사를 선임하든 말든 맘데로.");
-                return false;
+        //scoreboard on/off
+        if (command.getName().equalsIgnoreCase("정보표시창")) {
+            if (args[0].equalsIgnoreCase("켜기")) {
+                setScoreBoard(p);
+            }
+            else if (args[0].equalsIgnoreCase("끄기")) {
+                p.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
             }
         }
         //칭호(설정부분)
         if (command.getName().equalsIgnoreCase("칭호설정")) {
-            if (args.length == 1) {
-                String 칭호 = args[0];
-                this.칭호.put(p.getName(), 칭호);
-                p.sendMessage(ChatColor.YELLOW + "채팅 칭호가 설정되었습니다 [" + 칭호 + "]");
+            if (args.length == 2) {
+            String 칭호 = args[0];
+            String 색깔 = args[1];
+            this.칭호.put(p.getName(), 칭호);
+            this.색깔.put(p.getName(), 색깔);
+            p.sendMessage(ChatColor.YELLOW + "채팅 칭호가 설정되었습니다 ["+ ChatColor.valueOf(색깔) + 칭호 + ChatColor.YELLOW + "]");
             }
             else {
                 p.sendMessage(ChatColor.RED + "잘못된 구문입니다");
             }
         }
-        //homes(개발중)
-        if (command.getName().equalsIgnoreCase("home")) {
-            String home = args[0];
+        //warp(개발중)
+        if (command.getName().equalsIgnoreCase("warp")) {
+            String warp = args[0];
+            int x = p.getLocation().getBlockX();
+            int y = p.getLocation().getBlockY();
+            int z = p.getLocation().getBlockZ();
+            Location lo = p.getWorld().getBlockAt(x, y, z).getLocation();
+            this.warp.put(p.getName(), lo.getBlockX());
             }
         //서버 메뉴(기본)
         if (command.getName().equalsIgnoreCase("메뉴")) {
@@ -94,7 +140,7 @@ public class Main extends JavaPlugin implements Listener {
                 ItemStack item2 = new ItemStack(Material.EMERALD);ItemMeta meta2 = item2.getItemMeta();meta2.setDisplayName("상점");meta2.setLore(Arrays.asList("상점을 실행합니다"));item2.setItemMeta(meta2);
                 ItemStack item3 = new ItemStack(Material.CHEST);ItemMeta meta3 = item3.getItemMeta();meta3.setDisplayName("창고 보기");meta3.setLore(Arrays.asList("자신의 창고를", "실행합니다"));item3.setItemMeta(meta3);
                 ItemStack item4 = new ItemStack(Material.SKELETON_SKULL);ItemMeta meta4 = item4.getItemMeta();meta4.setDisplayName("자살하기");meta4.setLore(Arrays.asList("자살합니다"));item4.setItemMeta(meta4);
-                ItemStack item5 = new ItemStack(Material.WRITABLE_BOOK);ItemMeta meta5 = item5.getItemMeta();meta5.setDisplayName("서버 법 보기");meta5.setLore(Arrays.asList("법전을 실행합니다"));item5.setItemMeta(meta5);
+                ItemStack item5 = new ItemStack(Material.BOOK);ItemMeta meta5 = item5.getItemMeta();meta5.setDisplayName("14");meta5.setLore(Arrays.asList("14"));item5.setItemMeta(meta5);
                 ItemStack item6 = new ItemStack(Material.BOOK);ItemMeta meta6 = item6.getItemMeta();meta6.setDisplayName("명령어 도움말 보기");meta6.setLore(Arrays.asList("명령어 도움말을", "실행합니다"));item6.setItemMeta(meta6);
                 ItemStack item7 = new ItemStack(Material.PAPER);ItemMeta meta7 = item7.getItemMeta();meta7.setDisplayName("설정");meta7.setLore(Arrays.asList("설정을 실행합니다"));item7.setItemMeta(meta7);
                 inv.setItem(10, new ItemStack(item));
@@ -141,7 +187,7 @@ public class Main extends JavaPlugin implements Listener {
                     ItemStack item6 = new ItemStack(Material.BOOK);ItemMeta meta6 = item6.getItemMeta();meta6.setDisplayName("낮으로 바꾸기");meta6.setLore(Arrays.asList("해가 뜰 때로", "바꿔줍니다"));item6.setItemMeta(meta6);
                     ItemStack item7 = new ItemStack(Material.WITHER_SKELETON_SKULL);ItemMeta meta7 = item7.getItemMeta();meta7.setDisplayName("죽이기");meta7.setLore(Arrays.asList("플레이어 빼고 '다' 죽입니다"));item7.setItemMeta(meta7);
                     ItemStack item8 = new ItemStack(Material.BOOK);ItemMeta meta8 = item8.getItemMeta();meta8.setDisplayName("서버 리로드");meta8.setLore(Arrays.asList("서버를 다시 로딩합니다"));item8.setItemMeta(meta8);
-                    ItemStack item9 = new ItemStack(Material.BOOK);ItemMeta meta9 = item9.getItemMeta();meta9.setDisplayName("스크립트 리로드");meta9.setLore(Arrays.asList("모든 스크립트를", "다시 로딩합니다"));item9.setItemMeta(meta9);
+                    ItemStack item9 = new ItemStack(Material.BOOK);ItemMeta meta9 = item9.getItemMeta();meta9.setDisplayName("플러그인 리로드");meta9.setLore(Arrays.asList("모든 플러그인을", "다시 로딩합니다"));item9.setItemMeta(meta9);
                     ItemStack item10 = new ItemStack(Material.BOOK);ItemMeta meta10 = item10.getItemMeta();meta10.setDisplayName("10");meta10.setLore(Arrays.asList("10"));item10.setItemMeta(meta10);
                     ItemStack item11 = new ItemStack(Material.BOOK);ItemMeta meta11 = item11.getItemMeta();meta11.setDisplayName("11");meta11.setLore(Arrays.asList("11"));item11.setItemMeta(meta11);
                     ItemStack item12 = new ItemStack(Material.BOOK);ItemMeta meta12 = item12.getItemMeta();meta12.setDisplayName("12");meta12.setLore(Arrays.asList("12"));item12.setItemMeta(meta12);
@@ -198,10 +244,10 @@ public class Main extends JavaPlugin implements Listener {
                 ItemStack item = new ItemStack(Material.OAK_SIGN);ItemMeta meta = item.getItemMeta();meta.setDisplayName("정보표시창 [켜기/끄기]");meta.setLore(Arrays.asList("정보표시창을 켜거나 끕니다"));item.setItemMeta(meta);
                 ItemStack item2 = new ItemStack(Material.EMERALD);ItemMeta meta2 = item2.getItemMeta();meta2.setDisplayName("칭호 관리");meta2.setLore(Arrays.asList("칭호목록을 실행합니다"));item2.setItemMeta(meta2);
                 ItemStack item3 = new ItemStack(Material.CHEST);ItemMeta meta3 = item3.getItemMeta();meta3.setDisplayName("우편함 관리");meta3.setLore(Arrays.asList("우편함 목록을 실행합니다"));item3.setItemMeta(meta3);
-                ItemStack item4 = new ItemStack(Material.BOOK);ItemMeta meta4 = item4.getItemMeta();meta4.setDisplayName("~~");meta4.setLore(Arrays.asList("~~"));item4.setItemMeta(meta4);
-                ItemStack item5 = new ItemStack(Material.BOOK);ItemMeta meta5 = item5.getItemMeta();meta5.setDisplayName("~~");meta5.setLore(Arrays.asList("~~"));item5.setItemMeta(meta5);
-                ItemStack item6 = new ItemStack(Material.BOOK);ItemMeta meta6 = item6.getItemMeta();meta6.setDisplayName("~~");meta6.setLore(Arrays.asList("~~"));item6.setItemMeta(meta6);
-                ItemStack item7 = new ItemStack(Material.BOOK);ItemMeta meta7 = item7.getItemMeta();meta7.setDisplayName("~~");meta7.setLore(Arrays.asList("~~"));item7.setItemMeta(meta7);
+                ItemStack item4 = new ItemStack(Material.BOOK);ItemMeta meta4 = item4.getItemMeta();meta4.setDisplayName("13");meta4.setLore(Arrays.asList("13"));item4.setItemMeta(meta4);
+                ItemStack item5 = new ItemStack(Material.BOOK);ItemMeta meta5 = item5.getItemMeta();meta5.setDisplayName("14");meta5.setLore(Arrays.asList("14"));item5.setItemMeta(meta5);
+                ItemStack item6 = new ItemStack(Material.BOOK);ItemMeta meta6 = item6.getItemMeta();meta6.setDisplayName("15");meta6.setLore(Arrays.asList("15"));item6.setItemMeta(meta6);
+                ItemStack item7 = new ItemStack(Material.BOOK);ItemMeta meta7 = item7.getItemMeta();meta7.setDisplayName("16");meta7.setLore(Arrays.asList("16"));item7.setItemMeta(meta7);
                 ItemStack item8 = new ItemStack(Material.RED_DYE);ItemMeta meta8 = item8.getItemMeta();meta8.setDisplayName(ChatColor.RED + "메뉴로 돌아가기");meta8.setLore(Arrays.asList(ChatColor.RED + "메뉴로 이동합니다"));item8.setItemMeta(meta8);
                 inv.setItem(10, new ItemStack(item));
                 inv.setItem(11, new ItemStack(item2));
@@ -221,7 +267,8 @@ public class Main extends JavaPlugin implements Listener {
     public void onAsyncPlayerChat(AsyncPlayerChatEvent e) {
         String format = e.getFormat();
         String 칭호 = this.칭호.get(e.getPlayer().getName());
+        String 색깔 = this.색깔.get(e.getPlayer().getName());
         if(칭호 != null)
-            e.setFormat(칭호 + ChatColor.RESET + " " + format);
+            e.setFormat(ChatColor.valueOf(색깔) + 칭호 + " " + ChatColor.RESET + format);
     }
 }

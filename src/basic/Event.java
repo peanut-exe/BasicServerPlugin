@@ -2,6 +2,7 @@ package basic;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -19,7 +20,8 @@ public class Event implements Listener {
     @EventHandler
     //접속메세지
     public void onPlayerJoin(PlayerJoinEvent e) {
-        e.setJoinMessage(ChatColor.YELLOW + e.getPlayer().getName() + "님이 서버에 들어왔다!");}
+        e.setJoinMessage(ChatColor.YELLOW + e.getPlayer().getName() + "님이 서버에 들어왔다!");
+    }
 
     @EventHandler
     //퇴장메세지
@@ -46,7 +48,13 @@ public class Event implements Listener {
         Block b = p.getTargetBlock(null, 80);
         if (p.getItemInHand().getType().equals(Material.BLAZE_ROD)) {
             if(e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
-                p.getWorld().strikeLightning(b.getLocation());
+                if(p.getGameMode() == GameMode.CREATIVE) {
+                    p.getWorld().strikeLightning(b.getLocation());
+                }
+                //개발중
+                else if(p.getGameMode().equals(GameMode.SURVIVAL) || p.getGameMode().equals(GameMode.ADVENTURE)) {
+                    p.getWorld().strikeLightning(b.getLocation());
+                }
             }
         }
     }

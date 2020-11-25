@@ -17,11 +17,11 @@ commands:
     description: "execute world menu"
   설정:
     description: "execute setting"
+  정보표시창:
+    description: "on/off scoreboard"
   명령어:
     description: "execute help"
-  법전:
-    description: "execute code of laws"
   칭호설정:
     description: "Set the title"
   b:
-    description: "plugin info"
+    description: "plugin utility tool"

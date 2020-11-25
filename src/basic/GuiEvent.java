@@ -51,14 +51,8 @@ public class GuiEvent implements Listener {
                 case 11:
                     p.performCommand("상점");
                     break;
-                case 12:
-                    //창고
-                    break;
                 case 13:
                     p.performCommand("minecraft:kill @s");
-                    break;
-                case 14:
-                    p.performCommand("법전");
                     break;
                 case 15:
                     p.performCommand("명령어 도움말");
@@ -109,15 +103,7 @@ public class GuiEvent implements Listener {
                     p.performCommand("reload");
                     break;
                 case 20:
-                    p.performCommand("sk reload all");
-                    break;
-                case 21:
-                    break;
-                case 22:
-                    break;
-                case 23:
-                    break;
-                case 24:
+                    p.performCommand("b reload");
                     break;
                 case 25:
                     p.performCommand("stop");
@@ -157,18 +143,6 @@ public class GuiEvent implements Listener {
                     break;
                 case 12:
                     p.performCommand("//우편");
-                    break;
-                case 13:
-                    //
-                    break;
-                case 14:
-                    //
-                    break;
-                case 15:
-                    //
-                    break;
-                case 16:
-                    //
                     break;
                 case 26:
                     p.performCommand("메뉴");
