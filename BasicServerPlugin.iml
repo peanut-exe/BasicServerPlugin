@@ -19,7 +19,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../Dependencies-basicserverplugin/spigot-api-1.16.3-R0.1-20201017.075950-23.jar!/" />
+          <root url="jar://$MODULE_DIR$/Dependencies/spigot-api-1.16.3-R0.1-20201017.075950-23.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
