@@ -18,22 +18,17 @@ public class GuiEvent implements Listener {
     public void PlayerInteract(PlayerInteractEvent e) {
         Player p = e.getPlayer();
         //서버 메뉴(기본)(아이템이벤트)
-        if (p.getItemInHand().getType().equals(Material.CLOCK)) {
+        if (p.getItemInHand().getType().equals(Material.CLOCK) && e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
             if (p.getItemInHand().getItemMeta().getDisplayName().equals("서버 메뉴")) {
-                if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
-                    p.performCommand("메뉴");
-                }
+                p.performCommand("메뉴");
             }
         }
         //관리자 메뉴(아이템이벤트)
-        if (p.getItemInHand().getType().equals(Material.NETHER_STAR)) {
+        if (p.getItemInHand().getType().equals(Material.NETHER_STAR) && e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
             if (p.getItemInHand().getItemMeta().getDisplayName().equals("관리자 메뉴")) {
-                if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
-                    if (p.isOp()) {
-                        p.performCommand("관리자메뉴");
-                    }
-                    else {p.sendMessage(ChatColor.RED + "당신은 op가 아니기 때문에 이 작업을 할 수 없음!");}
-                }
+                if (p.isOp()) {
+                    p.performCommand("관리자메뉴");
+                } else {p.sendMessage(ChatColor.RED + "당신은 op가 아니기 때문에 이 작업을 할 수 없음!");}
             }
         }
     }

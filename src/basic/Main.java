@@ -74,29 +74,22 @@ public class Main extends JavaPlugin implements Listener {
         if (command.getName().equalsIgnoreCase("b")) {
             if (args.length == 0) {
                 sender.sendMessage(ChatColor.RED + "Type the command to execute.");
-            }
-            else if (args[0].equalsIgnoreCase("info")) {
+            } else if (args[0].equalsIgnoreCase("info")) {
                 sender.sendMessage(ChatColor.YELLOW + "This Plugin is Made By bjw300 and peanutexe");
-            }
-            else if (args[0].equalsIgnoreCase("reload")) {
+            } else if (args[0].equalsIgnoreCase("reload")) {
                 Bukkit.reload();
                 this.reloadConfig();
                 this.saveDefaultConfig();
                 p.sendMessage(ChatColor.YELLOW + "All plugins have been reloaded!");
-            }
-            else {
+            } else {
                 sender.sendMessage(ChatColor.RED + "Command is not correct.");}
             return true;
         }
         //도움말
         if (command.getName().equalsIgnoreCase("명령어")) {
-            if (args.length == 0) {
-                sender.sendMessage(ChatColor.RED + "명령어 사용법: /명령어 [도움/도움말/모음]");
-            }
-            else if (args[0].equals("도움") || args[0].equals("도움말") || args[0].equals("모음")) {
+            if (args[0].equals("도움") || args[0].equals("도움말") || args[0].equals("모음")) {
                 sender.sendMessage("메뉴열기,지급 명령어: /[메뉴/메뉴 지급]\n정보표시창 켜기/끄기: /정보표시창 [켜기/끄기]\n자신의 창고보기: /(창고/warehouse)");
-            }
-            else {
+            } else {
                 sender.sendMessage(ChatColor.RED + "명령어 사용법: /명령어 [도움/도움말/모음]");
             }
             return true;
@@ -105,8 +98,7 @@ public class Main extends JavaPlugin implements Listener {
         if (command.getName().equalsIgnoreCase("정보표시창")) {
             if (args[0].equalsIgnoreCase("켜기")) {
                 setScoreBoard(p);
-            }
-            else if (args[0].equalsIgnoreCase("끄기")) {
+            } else if (args[0].equalsIgnoreCase("끄기")) {
                 p.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
             }
         }
@@ -114,12 +106,16 @@ public class Main extends JavaPlugin implements Listener {
         if (command.getName().equalsIgnoreCase("칭호설정")) {
             if (args.length == 2) {
             String 칭호 = args[0];
-            String 색깔 = args[1];
+            String 색깔 = args[1].toUpperCase();
             this.칭호.put(p.getName(), 칭호);
             this.색깔.put(p.getName(), 색깔);
             p.sendMessage(ChatColor.YELLOW + "채팅 칭호가 설정되었습니다 ["+ ChatColor.valueOf(색깔) + 칭호 + ChatColor.YELLOW + "]");
-            }
-            else {
+            } else if (args.length == 1) {
+                String 칭호 = args[0];
+                this.칭호.put(p.getName(), 칭호);
+                this.색깔.put(p.getName(), "RESET");
+                p.sendMessage(ChatColor.YELLOW + "채팅 칭호가 설정되었습니다 ["+ ChatColor.RESET + 칭호 + ChatColor.YELLOW + "]");
+            } else {
                 p.sendMessage(ChatColor.RED + "잘못된 구문입니다");
             }
         }
@@ -131,6 +127,7 @@ public class Main extends JavaPlugin implements Listener {
             int z = p.getLocation().getBlockZ();
             Location lo = p.getWorld().getBlockAt(x, y, z).getLocation();
             this.warp.put(p.getName(), lo.getBlockX());
+            p.sendMessage(ChatColor.YELLOW + "위치가 저장되었습니다 ["+ ChatColor.RESET + "x:" + x + " y:" + y + " z:" + z + ChatColor.YELLOW + "]");
             }
         //서버 메뉴(기본)
         if (command.getName().equalsIgnoreCase("메뉴")) {
@@ -159,8 +156,8 @@ public class Main extends JavaPlugin implements Listener {
                 meta.setDisplayName("서버 메뉴");
                 meta.setLore(Arrays.asList("서버메뉴를 실행합니다"));
                 item.setItemMeta(meta);
-                p.getInventory().addItem(new ItemStack(item));}
-            else {
+                p.getInventory().addItem(new ItemStack(item));
+            } else {
                 sender.sendMessage(ChatColor.RED + "명령어 사용법: 메뉴열기,지급 명령어: /[메뉴/메뉴 지급]");
             }
         }
@@ -217,8 +214,7 @@ public class Main extends JavaPlugin implements Listener {
                     meta.setLore(Arrays.asList("관리자 메뉴를 실행합니다"));
                     item.setItemMeta(meta);
                     p.getInventory().addItem(new ItemStack(item));}
-            }
-            else {
+            } else {
                 p.sendMessage(ChatColor.RED + "당신은 op가 아니기 때문에 이 작업을 할 수 없음!");
             }
         }
@@ -268,7 +264,8 @@ public class Main extends JavaPlugin implements Listener {
         String format = e.getFormat();
         String 칭호 = this.칭호.get(e.getPlayer().getName());
         String 색깔 = this.색깔.get(e.getPlayer().getName());
-        if(칭호 != null)
+        if(칭호 != null) {
             e.setFormat(ChatColor.valueOf(색깔) + 칭호 + " " + ChatColor.RESET + format);
+        }
     }
 }
